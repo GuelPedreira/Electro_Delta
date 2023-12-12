@@ -1,0 +1,266 @@
+
+@import url("https://fonts.googleapis.com/css?family=Poppins:400,600,700|Rubik:400,600,700");
+
+
+.gr-overlay {
+  background: linear-gradient(to left, #dfdfd7, #bdbdb8, rgb(161, 160, 160));
+  opacity: 0.87;
+}
+
+#mainNav {
+  background-color: rgba(0, 0, 0, 0); 
+}
+
+.dropdown-menu li:first-child {
+  margin-top: 5px;
+}
+
+.dropdown-menu li:last-child {
+  margin-bottom: 5px;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.dropleft .dropdown-menu,
+.dropright .dropdown-menu {
+  margin: 0;
+}
+
+.dropleft .dropdown-toggle::before,
+.dropright .dropdown-toggle::after {
+  font-weight: bold;
+  font-family: "Font Awesome 5 Free";
+  border: 0;
+  font-size: 10px;
+  vertical-align: 1px;
+}
+
+.dropleft .dropdown-toggle::before {
+  content: "\f053";
+  margin-right: 5px;
+}
+
+.dropright .dropdown-toggle::after {
+  content: "\f054";
+  margin-left: 5px;
+}
+
+.dropdown-item {
+  padding: 0.6rem 1.5rem 0.35rem;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dropdown-submenu.active > .dropdown-toggle,
+.dropdown-submenu:hover > .dropdown-item,
+.dropdown-item.active,
+.dropdown-item:hover {
+  background: rgba(99, 92, 219, 0.1);
+  color: #3730b9;
+}
+
+.dropdown-menu {
+  background-color: rgba(209, 205, 205, 0.9);
+}
+
+
+body {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 26px;
+  font-family: "Rubik", sans-serif;
+  position: relative;
+  background-color: rgb(134, 135, 136);
+  height: 100vh;
+  overflow: auto;
+}
+
+.card-body {
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+p {
+  line-height: 28px;
+  font-size: 15px;
+}
+
+html {
+  overflow-x: hidden !important;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+
+h5 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  margin-bottom: 0px;
+  color: #232323;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+h5.subtitle {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+a {
+  text-decoration: none;
+  transition: all 0.2s;
+  color: #000;
+}
+
+a:hover {
+  color: #89b0eb;
+  text-decoration: none;
+}
+
+a:focus {
+  outline: none;
+  text-decoration: none;
+}
+
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.btn {
+  font: 600 10.5px/1;
+  display: inline-block;
+  padding: 15px 45px 15px 45px;
+  text-transform: uppercase;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+  border-radius: 0px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.btn:focus,
+.btn:active,
+.btn:active:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.btn-hero,
+.btn-white:hover {
+  color: #fff !important;
+  background: #635CDB;
+}
+
+.btn-black,
+.btn-hero:hover {
+  background-color: rgb(74, 6, 182);
+  color: #fff !important;
+}
+
+.bg-feature {
+  background-color: #635CDB;
+}
+
+.bg-primary {
+  background-color: #0db8ca;
+}
+
+.overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+.brown-overlay {
+  background: #222955;
+  opacity: 0.97;
+}
+
+.feature-overlay {
+  background: #635CDB;
+  opacity: 0.97;
+}
+
+
+/*------------------------------------
+ BANNER AREA
+----------------------------------*/
+.banner-area .content-padding {
+  padding: 250px 0px 180px;
+}
+
+.content-padding {
+  padding: 180px 0px 80px;
+}
+
+.banner-content {
+  padding-right: 30px;
+}
+
+.banner-content .btn {
+  margin-top: 15px;
+}
+
+.banner-content p {
+  margin: 20px 0px;
+  color: #eee;
+  font-size: 18px;
+  line-height: 30px;
+}
+
+.banner-content .btn {
+  margin-right: 12px;
+}
+
+.btn-sm {
+  padding: 10px 30px;
+}
+
+body, #page-banner {
+  margin: 0;
+  padding: 0;
+}
+
+#page-banner {
+  position: relative;
+  padding: 60px 0px 80px;
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  
+  /*---------------
+     NAVIGATION
+    ----------------*/
+
+  .navbar-toggler {
+    background: #fff;
+    border-radius: 0px;
+  }
+  .navbar-toggler-icon {
+    height: auto;
+    padding: 5px 0px;
+    width: 1rem;
+  }
+  .trans-navigation {
+    background: #232323;
+  }
+  .navbar-expand-lg.trans-navigation .navbar-nav .nav-link {
+    margin-bottom: 10px;
+  }
+
+}
