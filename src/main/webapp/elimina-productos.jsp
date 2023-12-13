@@ -1,85 +1,58 @@
-<%@page import="java.sql.PreparedStatement"%>
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.sql.DriverManager"%>
-<%@page import="java.sql.Connection"%>
-<%@page contentType="text/html;charset=UTF-8"%>
-<!DOCTYPE html>
-<html>
+<%@ page import="java.sql.Connection"%>
+<%@ page import="java.sql.PreparedStatement"%>
+<%@ page import="java.sql.DriverManager"%>
+<%@ page import="java.sql.SQLException"%>
+
 <%
-    Connection conexion = null;
-    PreparedStatement consultaProd = null;
-    PreparedStatement consultaSuc = null;
-    ResultSet listaProducto = null;
-    ResultSet listaSucursal = null;
+String nombreSucursal = request.getParameter("sucursal");
+String productoCodigo = request.getParameter("productoCodigo");
 
-    try {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/electrodelta", "root", "admin");
+if (nombreSucursal == null || nombreSucursal.isEmpty() || productoCodigo == null || productoCodigo.isEmpty()) {
+    // Manejo de error: Parámetros faltantes o inválidos
+    out.println("Error: Parámetros faltantes o inválidos.");
+    return;
+}
 
-        String selectProd = "SELECT prod_id FROM prod_tb WHERE cod = ?";
-        String selectSuc = "SELECT denom FROM sucs_tb WHERE suc_id = ?";
+Connection conexion = null;
+PreparedStatement eliminarProducto = null;
 
-        consultaProd = conexion.prepareStatement(selectProd);
-        consultaSuc = conexion.prepareStatement(selectSuc);
+try {
+    Class.forName("com.mysql.cj.jdbc.Driver");
+    conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/electrodelta", "root", "admin");
 
-        consultaProd.setString(1, request.getParameter("codprod"));
-        consultaSuc.setString(1, request.getParameter("id_sucu"));
+    // Preparar la consulta para eliminar el producto de la sucursal
+    String eliminarProductoQuery = "DELETE FROM prod_suc WHERE sucu_id = (SELECT suc_id FROM sucs_tb WHERE denom = ?) AND produc_id = (SELECT prod_id FROM prod_tb WHERE cod = ?)";
+    eliminarProducto = conexion.prepareStatement(eliminarProductoQuery);
+    eliminarProducto.setString(1, nombreSucursal);
+    eliminarProducto.setString(2, productoCodigo);
 
-        listaProducto = consultaProd.executeQuery();
-        listaProducto.next();
-        
-        listaSucursal = consultaSuc.executeQuery();
-        listaSucursal.next();
-%>
-<head>
-    <title><%= listaSucursal.getString("denom") %></title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+    // Ejecutar la consulta para eliminar el producto
+    int filasAfectadas = eliminarProducto.executeUpdate();
 
-<body>
-    <h2><%= listaSucursal.getString("denom") %></h2>
-
-    <%
-        String deleteProd = "DELETE FROM prod_suc WHERE sucu_id = ? AND produc_id = ?";
-
-        try (PreparedStatement bajaProd = conexion.prepareStatement(deleteProd)) {
-            bajaProd.setString(1, request.getParameter("id_sucu"));
-            bajaProd.setInt(2, listaProducto.getInt("prod_id"));
-            bajaProd.executeUpdate();
-            
-            out.print("PRODUCTO ELIMINADO");
-
-        } catch (Exception e) {
-            // Manejo de excepciones
-            e.printStackTrace();
-            out.println("Hubo un problema al eliminar el producto.");
-            out.println("Detalle de la consulta:");
-            out.println(deleteProd + "<br/>");
-        }
-    %>
-
-    <br/><br/>
-
-    <a href="index.jsp" class="btn btn-white btn-circled">Volver</a>
-
-</body>
-<%
-    } catch (Exception e) {
-        // Manejo de excepciones
-        e.printStackTrace();
-        out.println("Hubo un problema al cargar la pÃ¡gina.");
-    } finally {
-        // Cierre de recursos
-        try {
-            if (listaProducto != null) listaProducto.close();
-            if (consultaProd != null) consultaProd.close();
-            if (listaSucursal != null) listaSucursal.close();
-            if (consultaSuc != null) consultaSuc.close();
-            if (conexion != null) conexion.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    // Verificar si se eliminó correctamente
+    if (filasAfectadas > 0) {
+        out.println("Producto eliminado correctamente.");
+    } else {
+        out.println("No se pudo eliminar el producto.");
     }
+
+} catch (ClassNotFoundException | SQLException e) {
+    e.printStackTrace();
+    out.println("Hubo un problema al eliminar el producto.");
+} finally {
+    // Cierre de recursos
+    try {
+        if (conexion != null) {
+            conexion.close();
+        }
+        if (eliminarProducto != null) {
+            eliminarProducto.close();
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+}
+
+// Redireccionar de nuevo a la página original (baja-productos.jsp)
+response.sendRedirect("baja-productos.jsp?sucursal=" + nombreSucursal);
 %>
-</html>

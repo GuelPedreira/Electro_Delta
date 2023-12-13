@@ -16,13 +16,47 @@ if (nombreSucursal == null || nombreSucursal.isEmpty()) {
 %>
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <title>Sucursal - <%= nombreSucursal %></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        .banner {
+            background-image: url('img/cambiar-electrodomesticos.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+        #total-cost-container {
+            margin-top: 20px;
+        }        
+        .volver {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #195fc7;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+        }                
+    </style>
+    
 </head>
-<body>
+<body style="background-color: #CCCCCC;">
+
 <%
     Connection conexion = null;
     PreparedStatement consultaSucursal = null;
@@ -56,32 +90,59 @@ if (nombreSucursal == null || nombreSucursal.isEmpty()) {
             ResultSet listaProductos = consultaProductos.executeQuery();
 
             int costototal = 0;
-
 %>
 
-<h4>PRODUCTOS DE LA SUCURSAL: <%= nombreSucursal %></h4>
-<p>Domicilio: <%= domicilio %></p>
+<div class="container">
+    <!-- Banner -->
+    <div class="banner">
+        <h1>PRODUCTOS DE LA SUCURSAL: <%= nombreSucursal %></h1>
+        <p>Domicilio: <%= domicilio %></p>
+    </div>
 
-<%
-            while (listaProductos.next()) {
-                int costoprod = Integer.parseInt(listaProductos.getString("stock")) * Integer.parseInt(listaProductos.getString("precio"));
-                costototal = costototal + costoprod;
-%>
+    <!-- Lista de productos en una tabla Bootstrap -->
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Código</th>
+                    <th>Stock</th>
+                    <th>Precio Unitario</th>
+                    <th>Costo Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% while (listaProductos.next()) { %>
+                    <tr>
+                        <td><%= listaProductos.getString("nombre") %></td>
+                        <td><%= listaProductos.getString("descripcion") %></td>
+                        <td><%= listaProductos.getString("codigo") %></td>
+                        <td><%= listaProductos.getString("stock") %></td>
+                        <td><%= listaProductos.getString("precio") %></td>
+                        <td><%= Integer.parseInt(listaProductos.getString("stock")) * Integer.parseInt(listaProductos.getString("precio")) %></td>
+                        <% costototal += Integer.parseInt(listaProductos.getString("stock")) * Integer.parseInt(listaProductos.getString("precio")); %>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
 
-<ul>
-    <li>PRODUCTO: <%= listaProductos.getString("nombre") %></li>
-    <li>DESCRIPCIÓN: <%= listaProductos.getString("descripcion") %></li>
-    <li>CÓDIGO: <%= listaProductos.getString("codigo") %></li>
-    <li>STOCK: <%= listaProductos.getString("stock") %></li>
-    <li>PRECIO UNITARIO: <%= listaProductos.getString("precio") %></li>
-    <li>COSTO TOTAL: <%= costoprod %></li>
-</ul>
+<!-- Costo total -->
+<div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div id="total-cost-container" class="bg-secondary text-light p-4 rounded text-center d-flex align-items-center justify-content-center" style="height: 60px;">
+                <p style="font-size: 18px; margin: 0;">COSTO TOTAL DE TODOS LOS PRODUCTOS: <%= costototal %></p>
+            </div>
+        </div>
+    </div>
+</div>
 
-<%
-            }
-%>
 
-<p>COSTO TOTAL DE TODOS LOS PRODUCTOS: <%= costototal %></p>
+    <!-- Botón de volver -->
+        <a href="index.jsp" class="volver">Volver</a>
+</div>
 
 <%
         } else {
@@ -111,7 +172,10 @@ if (nombreSucursal == null || nombreSucursal.isEmpty()) {
     }
 %>
 
-<br><br>
-<a href="index.jsp" class="btn btn-white btn-circled">Volver</a>
+<!-- Scripts de Bootstrap (asegúrate de tener Internet para cargar estos recursos) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 </body>
 </html>

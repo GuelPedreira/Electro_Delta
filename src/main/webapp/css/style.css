@@ -3,6 +3,78 @@
 
 
 .gr-overlay {
+  background: linear-gradient(to left, #dfdfd7, #bdbdb8, rgb(163, 161, 159));
+  opacity: 0.87;
+}
+
+#mainNav {
+  background-color: rgba(0, 0, 0, 0); 
+}
+
+.dropdown-menu li:first-child {
+  margin-top: 5px;
+}
+
+.dropdown-menu li:last-child {
+  margin-bottom: 5px;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.dropleft .dropdown-menu,
+.dropright .dropdown-menu {
+  margin: 0;
+}
+
+.dropleft .dropdown-toggle::before,
+.dropright .dropdown-toggle::after {
+  font-weight: bold;
+  font-family: "Font Awesome 5 Free";
+  border: 0;
+  font-size: 10px;
+  vertical-align: 1px;
+}
+
+.dropleft .dropdown-toggle::before {
+  content: "\f053";
+  margin-right: 5px;
+}
+
+.dropright .dropdown-toggle::after {
+  content: "\f054";
+  margin-left: 5px;
+}
+
+.dropdown-item {
+  padding: 0.6rem 1.5rem 0.35rem;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dropdown-submenu.active > .dropdown-toggle,
+.dropdown-submenu:hover > .dropdown-item,
+.dropdown-item.active,
+.dropdown-item:hover {
+      background: rgba(99, 92, 219, 0.1);
+  color: #3730b9;
+}
+
+.dropdown-menu {
+  background-color: rgba(209, 205, 205, 0.9);
+}
+
+
+User
+Está bien la estructura de mi archivo style.css?
+
+
+@import url("https://fonts.googleapis.com/css?family=Poppins:400,600,700|Rubik:400,600,700");
+
+
+.gr-overlay {
   background: linear-gradient(to left, #dfdfd7, #bdbdb8, rgb(161, 160, 160));
   opacity: 0.87;
 }
@@ -200,8 +272,9 @@ li {
 /*------------------------------------
  BANNER AREA
 ----------------------------------*/
+
 .banner-area .content-padding {
-  padding: 250px 0px 180px;
+  padding: 150px 0px 180px;
 }
 
 .content-padding {
@@ -262,5 +335,19 @@ body, #page-banner {
   .navbar-expand-lg.trans-navigation .navbar-nav .nav-link {
     margin-bottom: 10px;
   }
+  
+  .producto-row {
+    height: 30px; /* Ajusta la altura según tus necesidades */
+  }
+  
+  /* Agrega estilos para SUCURSAL y DOMICILIO */
+    .banner div {
+        font-family: 'Poppins', sans-serif; /* Aplica la fuente Poppins */
+        font-weight: 600; /* Aplica el grosor de la fuente (600 es semibold,*/
+    }
 
+    .banner div:nth-child(2) {
+        font-size: 18px; /* Ajusta el tamaño de la fuente para DOMICILIO*/
+    }
+    
 }
