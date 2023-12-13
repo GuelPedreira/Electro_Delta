@@ -47,8 +47,8 @@
 
         .banner {
             background-image: url('img/cambiar-electrodomesticos.jpg');
-            color: #B0B0B0;
-            padding: 40px 20px; /* Ajusta el tamaño de la banda superior */
+            color:#B0B0B0;
+            padding: 25px 20px; /* Ajusta el tamaño de la banda superior */
             text-align: center;
             font-weight: 600;
             font-size: 20px;

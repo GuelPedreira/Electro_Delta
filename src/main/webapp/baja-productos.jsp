@@ -35,7 +35,7 @@ if (nombreSucursal == null || nombreSucursal.isEmpty()) {
             background-repeat: no-repeat;
             background-position: center;
             color: #fff;
-            padding: 40px 20px; /* Ajusta el tamaño de la banda superior */
+            padding: 10px 10px; /* Ajusta el tamaño de la banda superior */
             text-align: center;
             font-weight: 600;
             font-size: 20px;

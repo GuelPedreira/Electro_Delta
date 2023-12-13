@@ -4,108 +4,121 @@
 
 <%
     String nombreSucursal = request.getParameter("sucursal");
-    if (nombreSucursal == null || nombreSucursal.isEmpty()) {
-        out.println("Error: El parámetro 'sucursal' no está presente en la URL.");
-        return;
-    }
+    String producto = request.getParameter("producto");
+    String descripcion = request.getParameter("descripcion");
+    String codigo = request.getParameter("codigo");
+    int cantidad = Integer.parseInt(request.getParameter("cantidad"));
+    int precio = Integer.parseInt(request.getParameter("precio"));
 
     Connection conexion = null;
-    PreparedStatement consultaSucursal = null;
-    ResultSet resultadoSucursal = null;
+    PreparedStatement consultaProducto = null;
+    PreparedStatement consultaStock = null;
+    PreparedStatement insertProducto = null;
+    PreparedStatement updateStock = null;
+    ResultSet resultadoProducto = null;
+    ResultSet resultadoStock = null;
 
     try {
         Class.forName("com.mysql.cj.jdbc.Driver");
         conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/electrodelta", "root", "admin");
 
-        String sucursalQuery = "SELECT suc_id FROM sucs_tb WHERE denom = ?";
-        consultaSucursal = conexion.prepareStatement(sucursalQuery);
-        consultaSucursal.setString(1, nombreSucursal);
+        // Verificar si el producto ya existe en la tabla prod_tb
+        String productoQuery = "SELECT prod_id, precio FROM prod_tb WHERE cod = ?";
+        consultaProducto = conexion.prepareStatement(productoQuery);
+        consultaProducto.setString(1, codigo);
+        resultadoProducto = consultaProducto.executeQuery();
 
-        resultadoSucursal = consultaSucursal.executeQuery();
+        if (resultadoProducto.next()) {
+            int productoId = resultadoProducto.getInt("prod_id");
+            int precioExistente = resultadoProducto.getInt("precio");
 
-        if (resultadoSucursal.next()) {
-            String sucursalId = resultadoSucursal.getString("suc_id");
+            // Verificar si el producto ya existe en la tabla prod_suc para la sucursal especificada
+            String stockQuery = "SELECT stock FROM prod_suc WHERE sucu_id = ? AND produc_id = ?";
+            consultaStock = conexion.prepareStatement(stockQuery);
+            consultaStock.setString(1, nombreSucursal);
+            consultaStock.setInt(2, productoId);
+            resultadoStock = consultaStock.executeQuery();
 
-            // Obtener los datos del formulario
-            String producto = request.getParameter("producto");
-            String descripcion = request.getParameter("descripcion");
-            String codigo = request.getParameter("codigo");
-            String cantidadStr = request.getParameter("cantidad");
-            String precioStr = request.getParameter("precio");
+            if (resultadoStock.next()) {
+                int stockExistente = resultadoStock.getInt("stock");
 
-            // Verificar si el producto ya existe en la sucursal
-            String productoQuery = "SELECT stock FROM prod_suc WHERE sucu_id = ? AND produc_id = ?";
-            PreparedStatement consultaProducto = conexion.prepareStatement(productoQuery);
-            consultaProducto.setString(1, sucursalId);
-            consultaProducto.setString(2, codigo);
-
-            ResultSet resultadoProducto = consultaProducto.executeQuery();
-
-            if (resultadoProducto.next()) {
-                // El producto ya existe, actualizar la cantidad
-                int cantidadActual = resultadoProducto.getInt("stock");
-                int cantidadNueva = Integer.parseInt(cantidadStr);
-                int nuevaCantidadTotal = cantidadActual + cantidadNueva;
-
-                String actualizarProductoQuery = "UPDATE prod_suc SET stock = ? WHERE sucu_id = ? AND produc_id = ?";
-                PreparedStatement actualizarProducto = conexion.prepareStatement(actualizarProductoQuery);
-                actualizarProducto.setInt(1, nuevaCantidadTotal);
-                actualizarProducto.setString(2, sucursalId);
-                actualizarProducto.setString(3, codigo);
-
-                actualizarProducto.executeUpdate();
+                // Actualizar el stock existente sumando la cantidad ingresada
+                int nuevoStock = stockExistente + cantidad;
+                String updateStockQuery = "UPDATE prod_suc SET stock = ? WHERE sucu_id = ? AND produc_id = ?";
+                updateStock = conexion.prepareStatement(updateStockQuery);
+                updateStock.setInt(1, nuevoStock);
+                updateStock.setString(2, nombreSucursal);
+                updateStock.setInt(3, productoId);
+                updateStock.executeUpdate();
             } else {
-                // El producto no existe, insertarlo
-                int cantidadNueva = Integer.parseInt(cantidadStr);
-                int precio = Integer.parseInt(precioStr);
-
-                // Verificar si el producto ya existe en la tabla prod_tb
-                String productoTablaQuery = "SELECT * FROM prod_tb WHERE cod = ?";
-                PreparedStatement consultaProductoTabla = conexion.prepareStatement(productoTablaQuery);
-                consultaProductoTabla.setString(1, codigo);
-
-                ResultSet resultadoProductoTabla = consultaProductoTabla.executeQuery();
-
-                if (resultadoProductoTabla.next()) {
-                    // El producto ya existe en la tabla prod_tb, verificar y actualizar el precio si es necesario
-                    int precioTabla = resultadoProductoTabla.getInt("precio");
-                    if (precio != precioTabla) {
-                        String actualizarPrecioQuery = "UPDATE prod_tb SET precio = ? WHERE cod = ?";
-                        PreparedStatement actualizarPrecio = conexion.prepareStatement(actualizarPrecioQuery);
-                        actualizarPrecio.setInt(1, precio);
-                        actualizarPrecio.setString(2, codigo);
-
-                        actualizarPrecio.executeUpdate();
-                    }
-                } else {
-                    // El producto no existe en la tabla prod_tb, insertarlo
-                    String insertarProductoQuery = "INSERT INTO prod_suc (sucu_id, produc_id, stock) VALUES (?, ?, ?)";
-                    PreparedStatement insertarProducto = conexion.prepareStatement(insertarProductoQuery);
-                    insertarProducto.setString(1, sucursalId);
-                    insertarProducto.setString(2, codigo);
-                    insertarProducto.setInt(3, cantidadNueva);
-
-                    insertarProducto.executeUpdate();
-                }
+                // Insertar el producto en la tabla prod_suc con el stock ingresado
+                String insertStockQuery = "INSERT INTO prod_suc (sucu_id, produc_id, stock) VALUES (?, ?, ?)";
+                insertProducto = conexion.prepareStatement(insertStockQuery);
+                insertProducto.setString(1, nombreSucursal);
+                insertProducto.setInt(2, productoId);
+                insertProducto.setInt(3, cantidad);
+                insertProducto.executeUpdate();
             }
 
+            // Verificar si el precio es distinto al existente en la tabla prod_tb
+            if (precio != precioExistente) {
+                String updatePrecioQuery = "UPDATE prod_tb SET precio = ? WHERE prod_id = ?";
+                PreparedStatement updatePrecio = conexion.prepareStatement(updatePrecioQuery);
+                updatePrecio.setInt(1, precio);
+                updatePrecio.setInt(2, productoId);
+                updatePrecio.executeUpdate();
+            }
         } else {
-            out.println("No se encontró la sucursal.");
+            // Insertar el producto en la tabla prod_tb y en la tabla prod_suc con el stock ingresado
+            String insertProductoQuery = "INSERT INTO prod_tb (nom_prod, descrip, cod, precio) VALUES (?, ?, ?, ?)";
+            insertProducto = conexion.prepareStatement(insertProductoQuery, Statement.RETURN_GENERATED_KEYS);
+            insertProducto.setString(1, producto);
+            insertProducto.setString(2, descripcion);
+            insertProducto.setString(3, codigo);
+            insertProducto.setInt(4, precio);
+            insertProducto.executeUpdate();
+
+            ResultSet generatedKeys = insertProducto.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int productoId = generatedKeys.getInt(1);
+
+                String insertStockQuery = "INSERT INTO prod_suc (sucu_id, produc_id, stock) VALUES (?, ?, ?)";
+                PreparedStatement insertStock = conexion.prepareStatement(insertStockQuery);
+                insertStock.setString(1, nombreSucursal);
+                insertStock.setInt(2, productoId);
+                insertStock.setInt(3, cantidad);
+                insertStock.executeUpdate();
+            }
         }
+
+        // Redireccionar a la página de éxito
+        response.sendRedirect("exito.jsp");
     } catch (ClassNotFoundException | SQLException e) {
         e.printStackTrace();
-        out.println("Hubo un problema al recuperar la sucursal.");
+        out.println("Hubo un problema al procesar la solicitud.");
     } finally {
         // Cierre de recursos
         try {
             if (conexion != null) {
                 conexion.close();
             }
-            if (consultaSucursal != null) {
-                consultaSucursal.close();
+            if (consultaProducto != null) {
+                consultaProducto.close();
             }
-            if (resultadoSucursal != null) {
-                resultadoSucursal.close();
+            if (consultaStock != null) {
+                consultaStock.close();
+            }
+            if (insertProducto != null) {
+                insertProducto.close();
+            }
+            if (updateStock != null) {
+                updateStock.close();
+            }
+            if (resultadoProducto != null) {
+                resultadoProducto.close();
+            }
+            if (resultadoStock != null) {
+                resultadoStock.close();
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

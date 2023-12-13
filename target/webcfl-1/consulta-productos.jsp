@@ -33,7 +33,7 @@ if (nombreSucursal == null || nombreSucursal.isEmpty()) {
             background-repeat: no-repeat;
             background-position: center;
             color: #fff;
-            padding: 10px;
+            padding: 10px 10px; /* Ajusta el tamaño de la banda superior */
             text-align: center;
         }
         .table-container {
