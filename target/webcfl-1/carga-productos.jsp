@@ -47,10 +47,7 @@
 
         .banner {
             background-image: url('img/cambiar-electrodomesticos.jpg');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            color: #fff;
+            color: #B0B0B0;
             padding: 40px 20px; /* Ajusta el tamaño de la banda superior */
             text-align: center;
             font-weight: 600;
@@ -61,7 +58,7 @@
             background-color: #14a44d;
             padding: 15px;
             border-radius: 10px;
-            width: 60%;
+            width: 40%;
             margin: auto;
             text-align: center;
             position: relative;
@@ -99,7 +96,7 @@
     </style>
 </head>
 
-<body style="background-color: #CCCCCC;">
+<body style="background-image: url('img/cambiar-electrodomesticos.jpg')">
 
     <!-- Banner -->
     <div class="banner">

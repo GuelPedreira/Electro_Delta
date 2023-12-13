@@ -144,18 +144,6 @@ if (nombreSucursal == null || nombreSucursal.isEmpty()) {
     </table>
 </div>
 
-<!-- Costo total -->
-<div class="container mt-3">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div id="total-cost-container" class="bg-secondary text-light p-4 rounded text-center d-flex align-items-center justify-content-center" style="height: 60px;">
-                <p style="font-size: 18px; margin: 0;">COSTO TOTAL DE TODOS LOS PRODUCTOS: <%= costototal %></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-
     <!-- Botón de volver -->
     <a href="index.jsp" class="volver">Volver</a>
 </div>
