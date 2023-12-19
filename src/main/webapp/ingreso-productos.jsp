@@ -3,10 +3,10 @@
 <%@ page import="java.util.*"%>
 
 <%
-    String nombreSucursal = request.getParameter("sucursal");
-    String producto = request.getParameter("producto");
-    String descripcion = request.getParameter("descripcion");
-    String codigo = request.getParameter("codigo");
+    String nombreSucursal = (String) request.getAttribute("sucursal");
+    String producto = request.getParameter("producto").toUpperCase();
+    String descripcion = request.getParameter("descripcion").toUpperCase();
+    String codigo = request.getParameter("codigo").toUpperCase();
     int cantidad = Integer.parseInt(request.getParameter("cantidad"));
     int precio = Integer.parseInt(request.getParameter("precio"));
 
@@ -33,40 +33,44 @@
             int precioExistente = resultadoProducto.getInt("precio");
 
             // Verificar si el producto ya existe en la tabla prod_suc para la sucursal especificada
-            String stockQuery = "SELECT stock FROM prod_suc WHERE sucu_id = ? AND produc_id = ?";
-            consultaStock = conexion.prepareStatement(stockQuery);
-            consultaStock.setString(1, nombreSucursal);
-            consultaStock.setInt(2, productoId);
-            resultadoStock = consultaStock.executeQuery();
+            if (nombreSucursal != null && !nombreSucursal.isEmpty()) {
+                String stockQuery = "SELECT stock FROM prod_suc WHERE sucu_id = ? AND produc_id = ?";
+                consultaStock = conexion.prepareStatement(stockQuery);
+                consultaStock.setString(1, nombreSucursal);
+                consultaStock.setInt(2, productoId);
+                resultadoStock = consultaStock.executeQuery();
 
-            if (resultadoStock.next()) {
-                int stockExistente = resultadoStock.getInt("stock");
+                if (resultadoStock.next()) {
+                    int stockExistente = resultadoStock.getInt("stock");
 
-                // Actualizar el stock existente sumando la cantidad ingresada
-                int nuevoStock = stockExistente + cantidad;
-                String updateStockQuery = "UPDATE prod_suc SET stock = ? WHERE sucu_id = ? AND produc_id = ?";
-                updateStock = conexion.prepareStatement(updateStockQuery);
-                updateStock.setInt(1, nuevoStock);
-                updateStock.setString(2, nombreSucursal);
-                updateStock.setInt(3, productoId);
-                updateStock.executeUpdate();
+                    // Actualizar el stock existente sumando la cantidad ingresada
+                    int nuevoStock = stockExistente + cantidad;
+                    String updateStockQuery = "UPDATE prod_suc SET stock = ? WHERE sucu_id = ? AND produc_id = ?";
+                    updateStock = conexion.prepareStatement(updateStockQuery);
+                    updateStock.setInt(1, nuevoStock);
+                    updateStock.setString(2, nombreSucursal);
+                    updateStock.setInt(3, productoId);
+                    updateStock.executeUpdate();
+                } else {
+                    // Insertar el producto en la tabla prod_suc con el stock ingresado
+                    String insertStockQuery = "INSERT INTO prod_suc (sucu_id, produc_id, stock) VALUES (?, ?, ?)";
+                    insertProducto = conexion.prepareStatement(insertStockQuery);
+                    insertProducto.setString(1, nombreSucursal);
+                    insertProducto.setInt(2, productoId);
+                    insertProducto.setInt(3, cantidad);
+                    insertProducto.executeUpdate();
+                }
+
+                // Verificar si el precio es distinto al existente en la tabla prod_tb
+                if (precio != precioExistente) {
+                    String updatePrecioQuery = "UPDATE prod_tb SET precio = ? WHERE prod_id = ?";
+                    PreparedStatement updatePrecio = conexion.prepareStatement(updatePrecioQuery);
+                    updatePrecio.setInt(1, precio);
+                    updatePrecio.setInt(2, productoId);
+                    updatePrecio.executeUpdate();
+                }
             } else {
-                // Insertar el producto en la tabla prod_suc con el stock ingresado
-                String insertStockQuery = "INSERT INTO prod_suc (sucu_id, produc_id, stock) VALUES (?, ?, ?)";
-                insertProducto = conexion.prepareStatement(insertStockQuery);
-                insertProducto.setString(1, nombreSucursal);
-                insertProducto.setInt(2, productoId);
-                insertProducto.setInt(3, cantidad);
-                insertProducto.executeUpdate();
-            }
-
-            // Verificar si el precio es distinto al existente en la tabla prod_tb
-            if (precio != precioExistente) {
-                String updatePrecioQuery = "UPDATE prod_tb SET precio = ? WHERE prod_id = ?";
-                PreparedStatement updatePrecio = conexion.prepareStatement(updatePrecioQuery);
-                updatePrecio.setInt(1, precio);
-                updatePrecio.setInt(2, productoId);
-                updatePrecio.executeUpdate();
+                out.println("El nombre de la sucursal no puede ser nulo o vacío.");
             }
         } else {
             // Insertar el producto en la tabla prod_tb y en la tabla prod_suc con el stock ingresado
@@ -90,12 +94,27 @@
                 insertStock.executeUpdate();
             }
         }
+        
+        String insertStockQuery = "INSERT INTO prod_suc (sucu_id, produc_id, stock) VALUES (?, ?, ?)";
+        int productoId = 0; // Declarar la variable productoId con un valor inicial
+
+        try {
+            // Realizar la inserción en la tabla prod_suc
+            PreparedStatement insertStock = conexion.prepareStatement(insertStockQuery);
+            insertStock.setString(1, nombreSucursal);
+            insertStock.setInt(2, productoId);
+            insertStock.setInt(3, cantidad);
+            insertStock.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            out.println("Hubo un problema al insertar en la tabla prod_suc: " + e.getMessage());
+        }
 
         // Redireccionar a la página de éxito
         response.sendRedirect("exito.jsp");
     } catch (ClassNotFoundException | SQLException e) {
         e.printStackTrace();
-        out.println("Hubo un problema al procesar la solicitud.");
+        out.println("Hubo un problema al procesar la solicitud: " + e.getMessage());
     } finally {
         // Cierre de recursos
         try {
