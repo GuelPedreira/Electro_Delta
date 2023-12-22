@@ -3,7 +3,7 @@
 <%@ page import="java.util.*"%>
 
 <%
-    String nombreSucursal = (String) request.getAttribute("sucursal");
+    String nombreSucursal = request.getParameter("sucursal");
     String producto = request.getParameter("producto").toUpperCase();
     String descripcion = request.getParameter("descripcion").toUpperCase();
     String codigo = request.getParameter("codigo").toUpperCase();

@@ -85,13 +85,34 @@
                                 <li><a class="dropdown-item" href="baja-productos.jsp?sucursal=TABLADA">Baja</a></li>
                             </ul>
                     </ul>
+                    
+                    <ul class="navbar-nav navbar-projects-menu">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#!" id="navbarProjects" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                style="background-color: blue; color: white;">
+                                Visitá mis otros trabajos <i class="fas fa-chevron-down"></i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarProjects">
+                                <li><a class="dropdown-item" href="https://guelpedreira.github.io/Barberia-Mr-Bigote/" target="_blank">Barbería Mr Bigote</a></li>
+                                <li><a class="dropdown-item" href="https://guelpedreira.github.io/Universo-Carnivoro/" target="_blank">Universo Carnívoro</a></li>
+                                <li><a class="dropdown-item" href="https://guelpedreira.github.io/Compra-de-Tickets/" target="_blank">Compra de tickets</a></li>
+              
+                            </ul>
+                        </li>
+                    </ul>
 
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="page-banner-area page-service" id="page-banner">
+    <div class="page-banner-area page-service" id="page-banner" style="height: 70px; padding: 0;">
+    <div class="overlay gr-overlay"></div>
+    <div class="row justify-content-center">
+    </div>
+</div>
+
         <div class="overlay gr-overlay"></div>
         <div class="row justify-content-center">
         </div>
